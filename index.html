@@ -247,6 +247,13 @@
   .type-chip:hover{background:var(--paper2)}
   .type-chip.sel{background:var(--blue);color:#fff;border-color:var(--blue)}
   .btn[type=submit],button[type=submit]{width:100%}
+  button[type=submit]:disabled{opacity:.5;cursor:default}
+  /* consent (DSG/DSGVO) */
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:0;font-size:12px;letter-spacing:0;text-transform:none;color:var(--mut);line-height:1.5;cursor:pointer}
+  .consent input{width:16px;height:16px;flex:none;margin-top:2px;accent-color:var(--blue);cursor:pointer}
+  .consent a{text-decoration:underline}
+  /* honeypot: скрыто от людей, видно ботам-автозаполнителям */
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
   .form-note{font-size:11px;color:var(--mut2);padding:14px 22px}
   .form-err{color:var(--blue);font-weight:700}
   .form-ok{display:none;padding:16px 22px;color:var(--blue);border-top:2px solid var(--ink);font-weight:700}
@@ -415,7 +422,7 @@
         <form id="briefform">
           <div class="frow">
             <div class="field"><label data-en="Name <span class='req'>*</span>" data-de="Name <span class='req'>*</span>">Name <span class="req">*</span></label><input type="text" id="f_name" required></div>
-            <div class="field"><label data-en="Company" data-de="Firma">Firma</label><input type="text"></div>
+            <div class="field"><label data-en="Company" data-de="Firma">Firma</label><input type="text" id="f_company"></div>
           </div>
           <div class="field"><label data-en="Email <span class='req'>*</span>" data-de="E-Mail <span class='req'>*</span>">E-Mail <span class="req">*</span></label><input type="email" id="f_email" required></div>
           <div class="field">
@@ -433,6 +440,12 @@
             </div>
           </div>
           <div class="field"><label data-en="Tell us about the project <span class='req'>*</span>" data-de="Beschreiben Sie das Projekt <span class='req'>*</span>">Beschreiben Sie das Projekt <span class="req">*</span></label><textarea id="f_msg" required></textarea></div>
+          <div class="field">
+            <label class="consent"><input type="checkbox" id="f_consent">
+              <span data-en="I agree that Creox GmbH may process my data to answer this enquiry. See <a href='#' data-legal='datenschutz'>privacy policy</a>. <span class='req'>*</span>" data-de="Ich bin einverstanden, dass die Creox GmbH meine Daten zur Beantwortung dieser Anfrage bearbeitet. Siehe <a href='#' data-legal='datenschutz'>Datenschutz</a>. <span class='req'>*</span>">Ich bin einverstanden, dass die Creox GmbH meine Daten zur Beantwortung dieser Anfrage bearbeitet. Siehe <a href="#" data-legal="datenschutz">Datenschutz</a>. <span class="req">*</span></span>
+            </label>
+          </div>
+          <div class="hp" aria-hidden="true"><label for="f_website">Website</label><input type="text" id="f_website" name="website" tabindex="-1" autocomplete="off"></div>
           <button type="submit" class="btn btn-primary" data-en="Send request" data-de="Anfrage senden">Anfrage senden</button>
           <div class="form-note" id="formnote" data-en="* required &middot; we reply within a week." data-de="* Pflichtfeld &middot; wir antworten innerhalb einer Woche.">* Pflichtfeld &middot; wir antworten innerhalb einer Woche.</div>
           <div class="form-ok" id="formok" data-en="Thanks &mdash; your brief is on its way. We'll be in touch shortly." data-de="Danke &mdash; Ihre Anfrage ist unterwegs. Wir melden uns in K&uuml;rze.">Danke &mdash; Ihre Anfrage ist unterwegs. Wir melden uns in K&uuml;rze.</div>
@@ -517,19 +530,49 @@
     document.querySelectorAll('.type-chip').forEach(x=>x.classList.remove('sel'));
     c.classList.add('sel');selType=c.textContent.trim();}));
 
-  // form validation
-  document.getElementById('briefform').addEventListener('submit',function(e){e.preventDefault();
+  // form: валидация + отправка в базу аудитории (общий endpoint платформы)
+  const FORMS_ENDPOINT='https://slswiss-tickets.vercel.app/api/forms';
+  const formOpened=Date.now(); // time-trap: мгновенный сабмит = бот
+
+  document.getElementById('briefform').addEventListener('submit',async function(e){e.preventDefault();
     const name=document.getElementById('f_name').value.trim();
     const email=document.getElementById('f_email').value.trim();
     const msg=document.getElementById('f_msg').value.trim();
+    const consent=document.getElementById('f_consent').checked;
     const note=document.getElementById('formnote');
+    const submitBtn=this.querySelector('button[type=submit]');
+    const fail=t=>{note.classList.add('form-err');note.textContent=t;};
+
     if(!name||!email||!selType||!msg){
-      note.classList.add('form-err');
-      note.textContent=lang==='en'?'Please fill name, email, event type and description.':'Bitte Name, E-Mail, Event-Typ und Beschreibung ausf&uuml;llen.';
+      fail(lang==='en'?'Please fill name, email, event type and description.':'Bitte Name, E-Mail, Event-Typ und Beschreibung ausfüllen.');
       if(!selType)document.getElementById('types').scrollIntoView({behavior:'smooth',block:'center'});
       return;}
-    document.getElementById('formok').style.display='block';
-    this.querySelector('button[type=submit]').style.display='none';note.style.display='none';});
+    if(!consent){
+      fail(lang==='en'?'Please accept the processing of your data.':'Bitte stimmen Sie der Bearbeitung Ihrer Daten zu.');
+      return;}
+
+    submitBtn.disabled=true;
+    note.classList.remove('form-err');
+    note.textContent=lang==='en'?'Sending…':'Wird gesendet…';
+    try{
+      const res=await fetch(FORMS_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({
+          source:'creox',form_key:'brief',source_url:location.href,kind:'lead',
+          role:selType,name,email,consent:true,
+          hp:document.getElementById('f_website').value,
+          elapsed_ms:Date.now()-formOpened,
+          payload:{company:document.getElementById('f_company').value.trim()||null,
+                   event_type:selType,message:msg,lang}
+        })});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data.ok)throw new Error(data.error||('HTTP '+res.status));
+      document.getElementById('formok').style.display='block';
+      submitBtn.style.display='none';note.style.display='none';
+    }catch(err){
+      console.error('[brief] send failed',err);
+      submitBtn.disabled=false;
+      fail(lang==='en'?'Sending failed. Please try again or email assistant@creox.ch.':'Senden fehlgeschlagen. Bitte erneut versuchen oder an assistant@creox.ch schreiben.');
+    }});
 
   // legal
   const legal={
@@ -541,8 +584,9 @@
          en:'<h3>Terms &amp; conditions</h3><p>These terms apply to all services of Creox GmbH unless otherwise agreed in writing. Scope is defined in the individual offer. Offers are non-binding until confirmed in writing. Prices in CHF, excl. VAT; invoices payable within 30 days. Swiss law applies, place of jurisdiction Baar (Zug).</p>'}
   };
   const ov=document.getElementById('legalOverlay'),lb=document.getElementById('legalBody');
-  document.querySelectorAll('[data-legal]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();
-    lb.innerHTML=legal[a.getAttribute('data-legal')][lang];ov.style.display='flex';document.body.style.overflow='hidden';}));
+  // делегирование: ссылки [data-legal] есть и внутри блоков, которые setLang перерисовывает
+  document.addEventListener('click',e=>{const a=e.target.closest('[data-legal]');if(!a)return;e.preventDefault();
+    lb.innerHTML=legal[a.getAttribute('data-legal')][lang];ov.style.display='flex';document.body.style.overflow='hidden';});
   document.getElementById('legalClose').addEventListener('click',()=>{ov.style.display='none';document.body.style.overflow='';});
   ov.addEventListener('click',e=>{if(e.target===ov){ov.style.display='none';document.body.style.overflow='';}});
 
