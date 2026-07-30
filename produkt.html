@@ -144,6 +144,12 @@
   .sub-form button{background:var(--neon);color:var(--ink);border:none;font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:16px 24px;cursor:pointer}
   .sub-form button:hover{background:#fff}
   .sub-note{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#8A8A87;margin-top:14px}
+  /* consent (DSG/DSGVO) — на тёмной секции */
+  .sub-consent{display:flex;gap:10px;align-items:flex-start;max-width:520px;margin-top:18px;font-family:var(--mono);font-size:11px;line-height:1.6;color:#B8B8B4;cursor:pointer;text-align:left}
+  .sub-consent input{width:16px;height:16px;flex:none;margin-top:1px;accent-color:var(--neon);cursor:pointer}
+  .sub-consent a{color:var(--paper);text-decoration:underline}
+  .sub-consent .req{color:var(--neon)}
+  .sub-form button:disabled{opacity:.5;cursor:default}
 
   /* FOOTER */
   footer{border-top:2px solid var(--ink);padding:40px 0 48px}
@@ -354,7 +360,10 @@
       <span aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label for="sub_website">Website</label><input type="text" id="sub_website" name="website" tabindex="-1" autocomplete="off"></span>
       <button type="submit" data-en="Notify me" data-de="Benachrichtigen">Notify me</button>
     </form>
-    <div class="sub-note" id="subnote" data-en="We'll only use your address to tell you about these product launches." data-de="Wir nutzen deine Adresse nur, um dich &uuml;ber diese Produkt-Launches zu informieren.">We'll only use your address to tell you about these product launches.</div>
+    <label class="sub-consent"><input type="checkbox" id="sub_consent">
+      <span data-en="I'd like to be notified by email about Creox product launches and consent to Creox GmbH storing my email address for this purpose. I can withdraw at any time. See <a href='#' data-legal='datenschutz'>privacy policy</a>. <span class='req'>*</span>" data-de="Ich möchte per E-Mail über die Produkt-Launches von Creox informiert werden und willige ein, dass die Creox GmbH meine E-Mail-Adresse dafür speichert. Ich kann jederzeit widerrufen. Siehe <a href='#' data-legal='datenschutz'>Datenschutz</a>. <span class='req'>*</span>">I'd like to be notified by email about Creox product launches and consent to Creox GmbH storing my email address for this purpose. I can withdraw at any time. See <a href="#" data-legal="datenschutz">privacy policy</a>. <span class="req">*</span></span>
+    </label>
+    <div class="sub-note" id="subnote" data-en="We'll only use your address for these launch announcements. Unsubscribe any time." data-de="Wir nutzen deine Adresse nur f&uuml;r diese Launch-Infos. Jederzeit abbestellbar.">We'll only use your address for these launch announcements. Unsubscribe any time.</div>
   </div>
 </div>
 
@@ -366,9 +375,21 @@
         <span data-en="In-house: MotoGen &middot; Antrix &middot; Audio Guide" data-de="Eigene Produkte: MotoGen &middot; Antrix &middot; Audio-Guide">In-house: MotoGen &middot; Antrix &middot; Audio Guide</span><br>
         &copy; <span id="yr"></span> Creox GmbH &middot; Switzerland
       </div>
+      <div class="foot-legal">
+        <a href="#" data-legal="impressum">Impressum</a>
+        <a href="#" data-legal="datenschutz">Datenschutz</a>
+        <a href="#" data-legal="agb">AGB</a>
+      </div>
     </div>
   </div>
 </footer>
+
+<div class="legal-overlay" id="legalOverlay" style="position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;padding:60px 20px;overflow-y:auto">
+  <div style="position:relative;background:#F4F4F1;color:#0E0E0E;max-width:720px;width:100%;padding:46px 40px;border:2px solid #0E0E0E;margin:auto">
+    <button id="legalClose" style="position:absolute;top:16px;right:20px;background:none;border:none;font-size:28px;cursor:pointer;color:#0E0E0E">&times;</button>
+    <div id="legalBody" style="font-family:'Space Mono',monospace;font-size:14px;line-height:1.7"></div>
+  </div>
+</div>
 
 <script>
   document.getElementById('yr').textContent=new Date().getFullYear();
@@ -404,10 +425,14 @@
 
   document.getElementById('subform').addEventListener('submit',async function(e){e.preventDefault();
     const email=document.getElementById('subemail').value.trim();
+    const consent=document.getElementById('sub_consent').checked;
     const note=document.getElementById('subnote');
     const submitBtn=this.querySelector('button');
     if(!email||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
       note.textContent=lang==='en'?'Please enter a valid email address.':'Bitte eine gültige E-Mail-Adresse eingeben.';
+      note.style.color='#FF6B6B';return;}
+    if(!consent){
+      note.textContent=lang==='en'?'Please tick the box to consent.':'Bitte Einwilligung ankreuzen.';
       note.style.color='#FF6B6B';return;}
     submitBtn.disabled=true;
     note.textContent=lang==='en'?'Sending…':'Wird gesendet…';
@@ -432,6 +457,22 @@
       submitBtn.disabled=false;
       note.textContent=lang==='en'?'Sending failed. Please try again or email assistant@creox.ch.':'Senden fehlgeschlagen. Bitte erneut versuchen oder an assistant@creox.ch schreiben.';
       note.style.color='#FF6B6B';}});
+
+  // legal
+  const legal={
+    impressum:{de:'<h3>Impressum</h3><p><b>Creox GmbH</b> &mdash; Event-Marketing-Agentur, Schweiz<br>Grabenstrasse 15b, 6340 Baar (ZG)<br>creox.ch</p><p>Handelsregister: Sitz Baar, Kanton Zug &middot; UID CHE-169.690.018<br>Gesch&auml;ftsf&uuml;hrer: Yves Vollenweider (Einzelunterschrift)</p><p style="color:#6A6A67;margin-top:14px">Die Inhalte dieser Website wurden mit Sorgfalt erstellt. Es wird keine Gew&auml;hr f&uuml;r Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t &uuml;bernommen.</p>',
+              en:'<h3>Legal notice</h3><p><b>Creox GmbH</b> &mdash; event marketing agency, Switzerland<br>Grabenstrasse 15b, 6340 Baar (ZG)<br>creox.ch</p><p>Commercial register: Baar, Canton of Zug &middot; UID CHE-169.690.018<br>Managing Director: Yves Vollenweider (sole signature)</p><p style="color:#6A6A67;margin-top:14px">This website has been compiled with care. No warranty is given for accuracy, completeness or timeliness.</p>'},
+    datenschutz:{de:'<h3>Datenschutz</h3><p>Die Creox GmbH bearbeitet Personendaten im Einklang mit dem Schweizer DSG und, soweit anwendbar, der EU-DSGVO.</p><p><b>Verantwortlich:</b> Creox GmbH, Grabenstrasse 15b, 6340 Baar (ZG).</p><p>Wenn Sie sich f&uuml;r Launch-Infos anmelden, bearbeiten wir Ihre E-Mail-Adresse ausschliesslich, um Sie &uuml;ber unsere Produkt-Launches (MotoGen, Antrix, Audio-Guide) zu informieren. Rechtsgrundlage ist Ihre Einwilligung, die Sie jederzeit mit Wirkung f&uuml;r die Zukunft widerrufen k&ouml;nnen &mdash; &uuml;ber den Abmeldelink in jeder E-Mail oder per Nachricht an assistant@creox.ch. Wir verwenden datenschutzfreundliche, cookie-freie Analyse. Sie haben Recht auf Auskunft, Berichtigung und L&ouml;schung Ihrer Daten.</p>',
+                en:'<h3>Privacy policy</h3><p>Creox GmbH processes personal data in accordance with the Swiss FADP and, where applicable, the EU GDPR.</p><p><b>Controller:</b> Creox GmbH, Grabenstrasse 15b, 6340 Baar (ZG).</p><p>If you sign up for launch updates, we process your email address solely to inform you about our product launches (MotoGen, Antrix, Audio Guide). The legal basis is your consent, which you can withdraw at any time with future effect &mdash; via the unsubscribe link in every email or by writing to assistant@creox.ch. We use privacy-friendly, cookie-free analytics. You have the right to access, correct and delete your data.</p>'},
+    agb:{de:'<h3>AGB</h3><p>Diese Bedingungen gelten f&uuml;r alle Leistungen der Creox GmbH, sofern nicht schriftlich anders vereinbart. Der Leistungsumfang wird im jeweiligen Angebot definiert. Angebote sind bis zur schriftlichen Best&auml;tigung unverbindlich. Preise in CHF, exkl. MwSt.; Rechnungen zahlbar innert 30 Tagen. Es gilt Schweizer Recht, Gerichtsstand Baar (Zug).</p>',
+         en:'<h3>Terms &amp; conditions</h3><p>These terms apply to all services of Creox GmbH unless otherwise agreed in writing. Scope is defined in the individual offer. Offers are non-binding until confirmed in writing. Prices in CHF, excl. VAT; invoices payable within 30 days. Swiss law applies, place of jurisdiction Baar (Zug).</p>'}
+  };
+  const ov=document.getElementById('legalOverlay'),lb=document.getElementById('legalBody');
+  // делегирование: ссылка [data-legal] есть и внутри блока согласия, который setLang перерисовывает
+  document.addEventListener('click',e=>{const a=e.target.closest('[data-legal]');if(!a)return;e.preventDefault();
+    lb.innerHTML=legal[a.getAttribute('data-legal')][lang];ov.style.display='flex';document.body.style.overflow='hidden';});
+  document.getElementById('legalClose').addEventListener('click',()=>{ov.style.display='none';document.body.style.overflow='';});
+  ov.addEventListener('click',e=>{if(e.target===ov){ov.style.display='none';document.body.style.overflow='';}});
 
   wrapAmps();
 
