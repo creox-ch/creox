@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creox Products &mdash; MotoGen, Antrix Ticketing &amp; Audio Guide | In development</title>
+<meta name="description" content="The products Creox is actively building: MotoGen (the platform for motorcyclists in Switzerland), Antrix (our own event ticketing and loyalty system, MVP October 2026) and an interactive QR audio guide for art. Follow along and be first to know.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://creox.ch/produkt">
+<meta property="og:title" content="Creox Products &mdash; in active development">
+<meta property="og:description" content="MotoGen, the Antrix ticketing &amp; loyalty system and a QR audio guide for art &mdash; the products we're building right now.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://creox.ch/produkt">
+<meta property="og:site_name" content="Creox">
+<meta property="og:image" content="https://creox.ch/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Creox &mdash; Event-Marketing-Agentur Schweiz">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Creox Products &mdash; in active development">
+<meta name="twitter:description" content="MotoGen, the Antrix ticketing &amp; loyalty system and a QR audio guide for art.">
+<meta name="twitter:image" content="https://creox.ch/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F4F1;
+    --paper2:#ECECE7;
+    --ink:#0E0E0E;
+    --mut:#3A3A37;
+    --mut2:#6A6A67;
+    --blue:#2E44D6;
+    --blueFg:#FFFFFF;
+    --neon:#C6FF3A;
+    --line:#0E0E0E;
+    --maxw:1200px;
+    --head:"Space Grotesk",sans-serif;
+    --mono:"Space Mono",monospace;
+    --body:"IBM Plex Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  .amp{font-family:inherit;font-style:inherit;font-weight:inherit;font-size:inherit;padding:0;vertical-align:baseline}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17.5px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:2px solid var(--ink)}
+  .nav-in{display:flex;justify-content:space-between;align-items:center;height:64px}
+  .logo{display:inline-block;font-family:var(--head);font-weight:700;font-size:18px;letter-spacing:.02em;text-transform:uppercase;background:var(--neon);color:var(--ink);padding:6px 12px;line-height:1;border:0}
+  .logo:hover{background:var(--ink);color:var(--neon)}
+  .nav-links{display:flex;gap:22px;font-size:13px;align-items:center;text-transform:uppercase;letter-spacing:.05em}
+  .nav-links a{color:var(--mut2)}
+  .nav-links a:not(.langbtn):hover{color:var(--blue)}
+  .nav-links a.active{color:var(--ink)}
+  .langbtn{border:2px solid var(--ink);background:none;color:var(--ink);padding:6px 12px;font-family:var(--mono);font-size:11px;cursor:pointer;border-radius:0;display:inline-flex;align-items:center;justify-content:center}
+  @media(hover:none){.langbtn{min-height:44px}}
+  .langbtn:hover{background:var(--ink);color:var(--paper)}
+  .nav-actions{display:flex;align-items:center;gap:14px}
+  .menu-toggle{display:none;background:none;border:none;font-size:24px;cursor:pointer;color:var(--ink);line-height:1;min-width:44px;min-height:44px;align-items:center;justify-content:center}
+
+  .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+
+  /* HERO */
+  header.hero{padding:66px 0 40px}
+  .hero h1{font-family:var(--head);font-weight:700;font-size:clamp(42px,8vw,92px);line-height:1.0;letter-spacing:-.03em;margin:20px 0 0;text-transform:uppercase}
+  .hero h1 .accent{color:var(--blue)}
+  .hero .lead{font-size:15px;max-width:640px;margin-top:26px;color:var(--mut);line-height:1.7}
+  .status-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+  .status{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border:1.5px solid var(--ink)}
+  .status.blue{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .status.neon{background:var(--neon);color:var(--ink);border-color:var(--neon)}
+  .status.ink{background:var(--ink);color:#fff}
+
+  section{padding:70px 0;border-top:2px solid var(--ink)}
+  .sec-head{max-width:760px}
+  .sec-head h2{font-family:var(--head);font-weight:700;font-size:clamp(28px,4.4vw,52px);line-height:1.02;letter-spacing:-.02em;text-transform:uppercase;margin-top:14px}
+  .sec-head p{color:var(--mut);font-size:14px;margin-top:16px;line-height:1.7}
+
+  /* PRODUCT FLIP CARDS (same mechanics as team) */
+  .prod-grid{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid var(--ink);border-bottom:none;border-right:none;margin-top:40px}
+  .prod{border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);perspective:1200px;cursor:pointer;min-height:360px}
+  .p-inner{position:relative;width:100%;height:100%;min-height:360px;transition:transform .6s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+  .prod.flip .p-inner{transform:rotateY(180deg)}
+  @media(hover:hover){.prod:hover .p-inner{transform:rotateY(180deg);transition-delay:.15s}}
+  .p-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;display:flex;flex-direction:column;overflow:hidden}
+  .p-front{justify-content:space-between;transform:rotateY(0deg);padding:24px 22px;transition:opacity 0s linear .3s}
+  .prod.flip .p-front{opacity:0}
+  @media(hover:hover){.prod:hover .p-front{opacity:0}}
+  /* front colour per product */
+  .prod:nth-child(1) .p-front{background:var(--blue);color:#fff}
+  .prod:nth-child(2) .p-front{background:var(--ink);color:#fff}
+  .prod:nth-child(3) .p-front{background:var(--neon);color:var(--ink)}
+  .p-front .p-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .p-badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:5px 9px;border:1.5px solid currentColor;opacity:.9}
+  .p-ico{width:40px;height:40px;flex:none}
+  .prod:nth-child(3) .p-ico{color:var(--ink)}
+  .p-front h3{font-family:var(--head);font-weight:700;font-size:clamp(26px,3vw,34px);text-transform:uppercase;line-height:1;letter-spacing:-.01em}
+  .p-front .p-tag{font-family:var(--mono);font-size:11px;letter-spacing:.05em;margin-top:10px;opacity:.85}
+  .p-front .p-hint{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-top:18px;opacity:.7}
+  .prod:nth-child(1) .p-badge{color:var(--neon);border-color:var(--neon)}
+  .prod:nth-child(3) .p-badge{color:var(--ink)}
+  /* back */
+  .p-back{transform:rotateY(180deg);background:var(--paper);padding:24px 22px;justify-content:flex-start;overflow-y:auto}
+  .prod:nth-child(2) .p-back{background:var(--paper2)}
+  .p-back h4{font-family:var(--head);font-weight:700;font-size:18px;text-transform:uppercase}
+  .p-back .p-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-top:6px}
+  .p-back p{font-size:12px;margin-top:12px;line-height:1.55;color:var(--mut)}
+  .p-tap{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;transition:transform .4s,background .3s;flex:none}
+  .prod:nth-child(3) .p-tap{background:rgba(14,14,14,.12)}
+  .p-tap svg{width:18px;height:18px}
+  .prod:hover .p-tap,.prod.flip .p-tap{transform:rotate(-180deg)}
+
+  /* MOTOGEN DETAIL — feature list */
+  .feat-intro{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start}
+  @media(max-width:820px){.feat-intro{grid-template-columns:1fr;gap:20px}}
+  .feat-intro .concept{border-left:6px solid var(--blue);padding:8px 0 8px 20px;background:linear-gradient(90deg,rgba(46,68,214,.06),transparent 60%)}
+  .feat-intro .concept .k{font-family:var(--head);font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:-.01em}
+  .feat-intro .concept p{color:var(--mut);font-size:13px;margin-top:8px}
+  .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);border:2px solid var(--ink);border-bottom:none;border-right:none;margin-top:40px}
+  @media(max-width:680px){.feat-grid{grid-template-columns:1fr}}
+  .feat{border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:24px 22px;position:relative;transition:background .25s}
+  .feat:hover{background:var(--ink);color:#fff}
+  .feat:hover .f-name{color:#fff}
+  .feat:hover .f-desc{color:rgba(255,255,255,.8)}
+  .feat:hover .f-ico{color:var(--neon)}
+  .feat .f-ico{width:26px;height:26px;color:var(--blue);transition:color .25s}
+  .feat .f-name{font-family:var(--head);font-weight:700;font-size:16px;text-transform:uppercase;margin-top:14px;transition:color .25s}
+  .feat .f-desc{font-size:12.5px;color:var(--mut);margin-top:8px;line-height:1.55;transition:color .25s}
+
+  /* NEWSLETTER CTA */
+  .sub{border-top:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:64px 0}
+  .sub .eyebrow{color:var(--neon)}
+  .sub h2{font-family:var(--head);font-weight:700;font-size:clamp(28px,4.4vw,50px);text-transform:uppercase;line-height:1.02;margin-top:14px}
+  .sub p{color:#B4B4B0;font-size:14px;margin-top:16px;max-width:560px}
+  .sub-form{display:flex;margin-top:30px;border:2px solid var(--paper);max-width:520px;flex-wrap:wrap}
+  .sub-form input{flex:1;min-width:200px;background:none;border:none;color:var(--paper);font-family:var(--mono);font-size:13px;padding:16px 18px;outline:none}
+  .sub-form input::placeholder{color:#8A8A87}
+  .sub-form button{background:var(--neon);color:var(--ink);border:none;font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:16px 24px;cursor:pointer}
+  .sub-form button:hover{background:#fff}
+  .sub-note{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#8A8A87;margin-top:14px}
+
+  /* FOOTER */
+  footer{border-top:2px solid var(--ink);padding:40px 0 48px}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+  .foot-meta,.foot-legal a{font-size:11px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;line-height:1.8}
+  .foot-legal{display:flex;gap:16px;margin-top:8px}
+  .foot-legal a:hover{color:var(--blue)}
+
+  @media(max-width:900px){
+    .prod-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .nav-links.open{display:flex;position:absolute;top:64px;left:0;right:0;flex-direction:column;background:var(--paper);padding:22px 26px;gap:18px;border-bottom:2px solid var(--ink)}
+    .menu-toggle{display:flex}
+  }
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.p-inner{transition:none}}
+</style>
+</head>
+<body>
+<a id="top"></a>
+<nav>
+  <div class="wrap nav-in">
+    <a href="/" class="logo">CREOX.</a>
+    <div class="nav-links" id="navlinks">
+      <a href="/#services" data-en="Agency" data-de="Agentur">Agency</a>
+      <a href="/#work" data-en="Work" data-de="Projekte">Work</a>
+      <a href="/produkt" class="active" data-en="Product" data-de="Produkt">Product</a>
+      <a href="/#team" data-en="Team" data-de="Team">Team</a>
+      <a href="/#contact" data-en="Brief us" data-de="Anfragen">Brief us</a>
+    </div>
+    <div class="nav-actions">
+      <button class="langbtn" id="langbtn">DE</button>
+      <button class="menu-toggle" id="menutoggle">&#9776;</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow reveal" data-en="In development &middot; Creox Labs" data-de="In Entwicklung &middot; Creox Labs">In development &middot; Creox Labs</span>
+    <h1 class="reveal" data-en="Products <span class='accent'>in the making</span>." data-de="Produkte <span class='accent'>in Arbeit</span>.">Products <span class="accent">in the making</span>.</h1>
+    <p class="lead reveal" data-en="Beyond client work, we build our own products. Three are in active development right now &mdash; each solving a real problem we ran into ourselves. Here's what we're working on, and how to be first to know when it launches."
+       data-de="Neben der Kundenarbeit entwickeln wir eigene Produkte. Drei davon sind gerade in aktiver Entwicklung &mdash; jedes l&ouml;st ein echtes Problem, auf das wir selbst gestossen sind. Hier siehst du, woran wir arbeiten &mdash; und wie du als Erste:r davon erf&auml;hrst.">Beyond client work, we build our own products. Three are in active development right now &mdash; each solving a real problem we ran into ourselves. Here's what we're working on, and how to be first to know when it launches.</p>
+    <div class="status-row reveal">
+      <span class="status blue" data-en="MotoGen &middot; Building" data-de="MotoGen &middot; In Entwicklung">MotoGen &middot; Building</span>
+      <span class="status ink" data-en="Antrix &middot; MVP Oct 2026" data-de="Antrix &middot; MVP Okt 2026">Antrix &middot; MVP Oct 2026</span>
+      <span class="status neon" data-en="Audio Guide &middot; MVP" data-de="Audio-Guide &middot; MVP">Audio Guide &middot; MVP</span>
+    </div>
+  </div>
+</header>
+
+<!-- PRODUCT FLIP CARDS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" data-en="Three products" data-de="Drei Produkte">Three products</span>
+      <h2 data-en="What we're building." data-de="Woran wir bauen.">What we're building.</h2>
+      <p data-en="Tap or hover a card to see what each product is about." data-de="Tippe oder fahre &uuml;ber eine Karte, um mehr zu jedem Produkt zu sehen.">Tap or hover a card to see what each product is about.</p>
+    </div>
+
+    <div class="prod-grid reveal">
+      <!-- MotoGen -->
+      <div class="prod">
+        <div class="p-inner">
+          <div class="p-face p-front">
+            <div class="p-top">
+              <span class="p-badge" data-en="Platform &middot; Building" data-de="Plattform &middot; In Entwicklung">Platform &middot; Building</span>
+              <div class="p-tap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg></div>
+            </div>
+            <div>
+              <svg class="p-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4c2 3 2 5 0 8s-2 5 0 8"/><path d="M17 4c-2 3-2 5 0 8s2 5 0 8"/><path d="M8 7h8M8 12h8M8 17h8"/></svg>
+              <h3>MotoGen</h3>
+              <div class="p-tag" data-en="The platform for motorcyclists in Switzerland" data-de="Die Plattform f&uuml;r Motorradfahrer:innen in der Schweiz">The platform for motorcyclists in Switzerland</div>
+              <div class="p-hint" data-en="Details &rarr;" data-de="Details &rarr;">Details &rarr;</div>
+            </div>
+          </div>
+          <div class="p-face p-back">
+            <h4>MotoGen</h4>
+            <div class="p-sub" data-en="Your bike. Your tracks. Your crew." data-de="Dein Bike. Deine Spuren. Deine Crew.">Your bike. Your tracks. Your crew.</div>
+            <p data-en="MotoGen isn't a navi and isn't a marketplace. It's where your riding life lives: the machines you own, the roads you've ridden, the people you ride with. Together they make up your &ldquo;genome&rdquo; &mdash; garage, map, challenges, clubs, ride-alongs, events and services in one app, with a QR profile, wallet and your MOTO-Z&Uuml;RICH tickets."
+               data-de="MotoGen ist kein Navi und keine B&ouml;rse. Es ist der Ort, an dem dein Fahrerleben steht: die Maschinen, die dir geh&ouml;ren, die Strassen, die du gefahren bist, die Leute, mit denen du f&auml;hrst. Zusammen ergibt das dein &bdquo;Genom&ldquo; &mdash; Garage, Karte, Challenges, Clubs, Mitfahren, Veranstaltungen und Services in einer App, mit QR-Profil, Wallet und deinen MOTO-Z&Uuml;RICH-Tickets.">MotoGen isn't a navi and isn't a marketplace. It's where your riding life lives: the machines you own, the roads you've ridden, the people you ride with. Together they make up your &ldquo;genome&rdquo; &mdash; garage, map, challenges, clubs, ride-alongs, events and services in one app, with a QR profile, wallet and your MOTO-Z&Uuml;RICH tickets.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Antrix -->
+      <div class="prod">
+        <div class="p-inner">
+          <div class="p-face p-front">
+            <div class="p-top">
+              <span class="p-badge" data-en="Ticketing &middot; MVP Oct 2026" data-de="Ticketing &middot; MVP Okt 2026">Ticketing &middot; MVP Oct 2026</span>
+              <div class="p-tap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg></div>
+            </div>
+            <div>
+              <svg class="p-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg>
+              <h3>Antrix</h3>
+              <div class="p-tag" data-en="Our own ticketing &amp; loyalty system for events" data-de="Unser eigenes Ticketing- &amp; Loyalty-System f&uuml;r Events">Our own ticketing &amp; loyalty system for events</div>
+              <div class="p-hint" data-en="Details &rarr;" data-de="Details &rarr;">Details &rarr;</div>
+            </div>
+          </div>
+          <div class="p-face p-back">
+            <h4>Antrix</h4>
+            <div class="p-sub" data-en="Ticketing &amp; loyalty &middot; MVP October 2026" data-de="Ticketing &amp; Loyalty &middot; MVP Oktober 2026">Ticketing &amp; loyalty &middot; MVP October 2026</div>
+            <p data-en="A Swiss ticketing system for events, built in-house &mdash; ticket sales with QR entry, payments, CRM and a clean data pipeline, plus a built-in loyalty programme that rewards returning guests. No commission to third parties, and audiences and data stay with the organiser. MVP launching October 2026."
+               data-de="Ein Schweizer Ticketing-System f&uuml;r Veranstaltungen, komplett selbst entwickelt &mdash; Ticketverkauf mit QR-Einlass, Zahlungen, CRM und sauberer Datenpipeline, dazu ein integriertes Loyalty-Programm, das wiederkehrende G&auml;ste belohnt. Keine Provisionen an Dritte, Zielgruppen und Daten bleiben beim Veranstalter. MVP-Launch im Oktober 2026.">A Swiss ticketing system for events, built in-house &mdash; ticket sales with QR entry, payments, CRM and a clean data pipeline, plus a built-in loyalty programme that rewards returning guests. No commission to third parties, and audiences and data stay with the organiser. MVP launching October 2026.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio Guide -->
+      <div class="prod">
+        <div class="p-inner">
+          <div class="p-face p-front">
+            <div class="p-top">
+              <span class="p-badge" data-en="Audio &middot; MVP" data-de="Audio &middot; MVP">Audio &middot; MVP</span>
+              <div class="p-tap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg></div>
+            </div>
+            <div>
+              <svg class="p-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l5 4V6l-5 4z"/><path d="M16 8a5 5 0 0 1 0 8"/></svg>
+              <h3 data-en="Audio Guide" data-de="Audio-Guide">Audio Guide</h3>
+              <div class="p-tag" data-en="Scan a QR, hear the story behind the art" data-de="QR scannen, die Geschichte hinter dem Werk h&ouml;ren">Scan a QR, hear the story behind the art</div>
+              <div class="p-hint" data-en="Details &rarr;" data-de="Details &rarr;">Details &rarr;</div>
+            </div>
+          </div>
+          <div class="p-face p-back">
+            <h4 data-en="Audio Guide" data-de="Audio-Guide">Audio Guide</h4>
+            <div class="p-sub" data-en="For galleries &amp; artists &middot; MVP" data-de="F&uuml;r Galerien &amp; Artists &middot; MVP">For galleries &amp; artists &middot; MVP</div>
+            <p data-en="An interactive audio guide for art, first as an MVP inside our gallery and with the artists we work with. Scan a QR code next to a piece and dive right into the story and concept behind it &mdash; some works are paired with music composed for exactly that moment. Built for galleries and artists who want more than a wall label."
+               data-de="Ein interaktiver Audio-Guide f&uuml;r Kunst, zun&auml;chst als MVP in unserer Galerie und mit den Artists, mit denen wir arbeiten. Scanne den QR-Code neben einem Werk und tauche direkt in die Geschichte und das Konzept dahinter ein &mdash; einzelne Werke sind mit eigens dazu komponierter Musik kombiniert. Gemacht f&uuml;r Galerien und Artists, die mehr wollen als ein Schild an der Wand.">An interactive audio guide for art, first as an MVP inside our gallery and with the artists we work with. Scan a QR code next to a piece and dive right into the story and concept behind it &mdash; some works are paired with music composed for exactly that moment. Built for galleries and artists who want more than a wall label.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOTOGEN DETAIL -->
+<section id="motogen">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow" data-en="Product in focus &middot; MotoGen" data-de="Produkt im Fokus &middot; MotoGen">Product in focus &middot; MotoGen</span>
+      <h2 data-en="Your bike. Your tracks. Your crew." data-de="Dein Bike. Deine Spuren. Deine Crew.">Your bike. Your tracks. Your crew.</h2>
+    </div>
+
+    <div class="feat-intro reveal" style="margin-top:30px">
+      <div>
+        <p style="color:var(--mut);font-size:14px" data-en="MotoGen is the platform for motorcyclists in Switzerland. It brings your whole riding life into one place: the machines you own, the roads you've ridden, the people you ride with. Everything below fits together into your personal &ldquo;genome&rdquo; &mdash; and connects to a QR profile, a points wallet and your event tickets."
+           data-de="MotoGen ist die Plattform f&uuml;r Motorradfahrer:innen in der Schweiz. Sie bringt dein ganzes Fahrerleben an einen Ort: die Maschinen, die dir geh&ouml;ren, die Strassen, die du gefahren bist, die Leute, mit denen du f&auml;hrst. Alles unten f&uuml;gt sich zu deinem pers&ouml;nlichen &bdquo;Genom&ldquo; zusammen &mdash; verbunden mit QR-Profil, Punkte-Wallet und deinen Event-Tickets.">MotoGen is the platform for motorcyclists in Switzerland. It brings your whole riding life into one place: the machines you own, the roads you've ridden, the people you ride with. Everything below fits together into your personal &ldquo;genome&rdquo; &mdash; and connects to a QR profile, a points wallet and your event tickets.</p>
+      </div>
+      <div class="concept">
+        <div class="k" data-en="The &ldquo;Genome&rdquo;" data-de="Das &bdquo;Genom&ldquo;">The &ldquo;Genome&rdquo;</div>
+        <p data-en="Not a navi, not a marketplace. A living profile that grows with every ride, bike and connection." data-de="Kein Navi, keine B&ouml;rse. Ein lebendiges Profil, das mit jeder Fahrt, jedem Bike und jeder Verbindung w&auml;chst.">Not a navi, not a marketplace. A living profile that grows with every ride, bike and connection.</p>
+      </div>
+    </div>
+
+    <div class="feat-grid reveal">
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/><path d="M9 19v-5h6v5"/></svg>
+        <div class="f-name">Garage</div>
+        <div class="f-desc" data-en="Every bike you own or owned, with specs, mods, service history and photos. Your digital garage that stays with you when you buy or sell." data-de="Jedes Bike, das dir geh&ouml;rt oder geh&ouml;rte &mdash; mit Daten, Umbauten, Service-Historie und Fotos. Deine digitale Garage, die bleibt, auch wenn du kaufst oder verkaufst.">Every bike you own or owned, with specs, mods, service history and photos. Your digital garage that stays with you when you buy or sell.</div>
+      </div>
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <div class="f-name" data-en="Map" data-de="Karte">Map</div>
+        <div class="f-desc" data-en="The roads you've ridden, saved and shared. Discover routes, mark favourites and build a map of where you and your crew have been." data-de="Die Strassen, die du gefahren bist &mdash; gespeichert und geteilt. Entdecke Routen, markiere Favoriten und baue eine Karte davon, wo du und deine Crew wart.">The roads you've ridden, saved and shared. Discover routes, mark favourites and build a map of where you and your crew have been.</div>
+      </div>
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+        <div class="f-name">Challenges</div>
+        <div class="f-desc" data-en="Passes, routes and seasonal goals turned into challenges. Collect badges and points as you ride &mdash; and see how you stack up." data-de="P&auml;sse, Routen und Saisonziele als Challenges. Sammle Badges und Punkte beim Fahren &mdash; und sieh, wo du stehst.">Passes, routes and seasonal goals turned into challenges. Collect badges and points as you ride &mdash; and see how you stack up.</div>
+      </div>
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6M18 20a6 6 0 0 0-3-5.2"/></svg>
+        <div class="f-name">Clubs</div>
+        <div class="f-desc" data-en="Find and run clubs and communities. Shared feeds, member lists and a home base for every group you ride with." data-de="Clubs und Communities finden und f&uuml;hren. Gemeinsame Feeds, Mitgliederlisten und ein Zuhause f&uuml;r jede Gruppe, mit der du f&auml;hrst.">Find and run clubs and communities. Shared feeds, member lists and a home base for every group you ride with.</div>
+      </div>
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17" r="3"/><circle cx="18.5" cy="17" r="3"/><path d="M8.5 17h5l2-6h3M9 11l3 6M9 11l1-3h4"/></svg>
+        <div class="f-name" data-en="Ride together" data-de="Mitfahren">Ride together</div>
+        <div class="f-desc" data-en="Post a ride or join one. Match with riders nearby, plan a route together and roll out as a group." data-de="Eine Ausfahrt posten oder mitfahren. Match mit Fahrer:innen in der N&auml;he, plant gemeinsam eine Route und fahrt als Gruppe los.">Post a ride or join one. Match with riders nearby, plan a route together and roll out as a group.</div>
+      </div>
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+        <div class="f-name" data-en="Events" data-de="Veranstaltungen">Events</div>
+        <div class="f-desc" data-en="Rides, meet-ups, track days and shows &mdash; including MOTO-Z&Uuml;RICH. Save events, get your QR ticket and keep it in your wallet." data-de="Ausfahrten, Treffen, Trackdays und Messen &mdash; inklusive MOTO-Z&Uuml;RICH. Events speichern, QR-Ticket holen und im Wallet behalten.">Rides, meet-ups, track days and shows &mdash; including MOTO-Z&Uuml;RICH. Save events, get your QR ticket and keep it in your wallet.</div>
+      </div>
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6 6 2 2 6-6a4 4 0 0 0 5.4-5.4l-2.3 2.3-2-2z"/></svg>
+        <div class="f-name">Services</div>
+        <div class="f-desc" data-en="Trusted garages, dealers and specialists near you. Book service, find parts and keep your bike's history in one place." data-de="Vertrauensw&uuml;rdige Werkst&auml;tten, H&auml;ndler und Spezialisten in deiner N&auml;he. Service buchen, Teile finden und die Historie deines Bikes an einem Ort behalten.">Trusted garages, dealers and specialists near you. Book service, find parts and keep your bike's history in one place.</div>
+      </div>
+      <div class="feat">
+        <svg class="f-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><path d="M13 15h3v3M20 20v.01M16 20v.01M20 15v3"/></svg>
+        <div class="f-name" data-en="QR profile &amp; wallet" data-de="QR-Profil &amp; Wallet">QR profile &amp; wallet</div>
+        <div class="f-desc" data-en="One QR code for your rider profile, plus a wallet that holds your points and your event tickets &mdash; ready to scan at MOTO-Z&Uuml;RICH." data-de="Ein QR-Code f&uuml;r dein Fahrerprofil, dazu ein Wallet mit deinen Punkten und Event-Tickets &mdash; bereit zum Scannen an der MOTO-Z&Uuml;RICH.">One QR code for your rider profile, plus a wallet that holds your points and your event tickets &mdash; ready to scan at MOTO-Z&Uuml;RICH.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER CTA -->
+<div class="sub">
+  <div class="wrap">
+    <span class="eyebrow" data-en="Stay in the loop" data-de="Bleib dran">Stay in the loop</span>
+    <h2 data-en="Be first to know." data-de="Erfahre es zuerst.">Be first to know.</h2>
+    <p data-en="We'll send a short note when MotoGen opens up, when Antrix ships its MVP in October 2026, and when the audio guide goes live. No spam &mdash; just launches." data-de="Wir schreiben dir kurz, wenn MotoGen &ouml;ffnet, wenn Antrix im Oktober 2026 sein MVP ausliefert und wenn der Audio-Guide live geht. Kein Spam &mdash; nur Launches.">We'll send a short note when MotoGen opens up, when Antrix ships its MVP in October 2026, and when the audio guide goes live. No spam &mdash; just launches.</p>
+    <form class="sub-form" id="subform">
+      <input type="email" id="subemail" placeholder="you@email.ch" aria-label="Email">
+      <span aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label for="sub_website">Website</label><input type="text" id="sub_website" name="website" tabindex="-1" autocomplete="off"></span>
+      <button type="submit" data-en="Notify me" data-de="Benachrichtigen">Notify me</button>
+    </form>
+    <div class="sub-note" id="subnote" data-en="We'll only use your address to tell you about these product launches." data-de="Wir nutzen deine Adresse nur, um dich &uuml;ber diese Produkt-Launches zu informieren.">We'll only use your address to tell you about these product launches.</div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-in">
+    <a href="/" class="logo">CREOX.</a>
+    <div>
+      <div class="foot-meta">
+        <span data-en="In-house: MotoGen &middot; Antrix &middot; Audio Guide" data-de="Eigene Produkte: MotoGen &middot; Antrix &middot; Audio-Guide">In-house: MotoGen &middot; Antrix &middot; Audio Guide</span><br>
+        &copy; <span id="yr"></span> Creox GmbH &middot; Switzerland
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  function wrapAmps(){
+    document.querySelectorAll('.hero h1,.sec-head h2,.p-front h3,.p-back h4,.f-name,.sub h2').forEach(el=>{
+      if(el.querySelector('.amp'))return;
+      if(el.innerHTML.includes(' &amp; ')||el.innerHTML.includes(' & ')){
+        el.innerHTML=el.innerHTML.replace(/ (&amp;|&) /g,' <span class="amp">&amp;</span> ');
+      }
+    });
+  }
+
+  // language — base is EN, toggle to DE
+  let lang='en';const btn=document.getElementById('langbtn');
+  function setLang(l){lang=l;document.documentElement.lang=l;btn.textContent=l==='en'?'DE':'EN';
+    document.querySelectorAll('[data-en]').forEach(el=>{const t=el.getAttribute('data-'+l);if(t!==null)el.innerHTML=t;});
+    wrapAmps();}
+  btn.addEventListener('click',()=>setLang(lang==='en'?'de':'en'));
+
+  // mobile menu
+  const mt=document.getElementById('menutoggle'),nl=document.getElementById('navlinks');
+  mt.addEventListener('click',()=>nl.classList.toggle('open'));
+  nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nl.classList.remove('open')));
+
+  // reveal
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('in');io.unobserve(e.target);})},{threshold:.14});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // newsletter → база аудитории (общий endpoint платформы), source=creox / newsletter
+  const FORMS_ENDPOINT='https://slswiss-tickets.vercel.app/api/forms';
+  const subOpened=Date.now(); // time-trap: мгновенный сабмит = бот
+
+  document.getElementById('subform').addEventListener('submit',async function(e){e.preventDefault();
+    const email=document.getElementById('subemail').value.trim();
+    const note=document.getElementById('subnote');
+    const submitBtn=this.querySelector('button');
+    if(!email||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+      note.textContent=lang==='en'?'Please enter a valid email address.':'Bitte eine gültige E-Mail-Adresse eingeben.';
+      note.style.color='#FF6B6B';return;}
+    submitBtn.disabled=true;
+    note.textContent=lang==='en'?'Sending…':'Wird gesendet…';
+    note.style.color='var(--mut2)';
+    try{
+      const res=await fetch(FORMS_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({
+          source:'creox',form_key:'newsletter',kind:'newsletter',source_url:location.href,
+          email,consent:true,
+          hp:document.getElementById('sub_website').value,
+          elapsed_ms:Date.now()-subOpened,
+          payload:{list:'product-launches',lang}
+        })});
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data.ok)throw new Error(data.error||('HTTP '+res.status));
+      note.textContent=lang==='en'?'Thanks — we\'ll be in touch when there\'s news.':'Danke — wir melden uns, sobald es Neuigkeiten gibt.';
+      note.style.color='var(--neon)';
+      submitBtn.style.display='none';
+      document.getElementById('subemail').setAttribute('disabled','');
+    }catch(err){
+      console.error('[newsletter] send failed',err);
+      submitBtn.disabled=false;
+      note.textContent=lang==='en'?'Sending failed. Please try again or email assistant@creox.ch.':'Senden fehlgeschlagen. Bitte erneut versuchen oder an assistant@creox.ch schreiben.';
+      note.style.color='#FF6B6B';}});
+
+  wrapAmps();
+
+  // flip on tap for touch devices
+  if(window.matchMedia('(hover: none)').matches){
+    document.querySelectorAll('.prod').forEach(card=>{
+      card.addEventListener('click',()=>card.classList.toggle('flip'));
+    });
+  }
+</script>
+<!-- Vercel Web Analytics — cookie-free -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
