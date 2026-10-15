@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://creox.ch/</loc>
-    <lastmod>2026-07-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://creox.ch/produkt</loc>
-    <lastmod>2026-07-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://creox.ch</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en"/></url>
+  <url><loc>https://creox.ch/en</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en"/></url>
+  <url><loc>https://creox.ch/marketing-assistant</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/marketing-assistant"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/marketing-assistant"/></url>
+  <url><loc>https://creox.ch/en/marketing-assistant</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/marketing-assistant"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/marketing-assistant"/></url>
+  <url><loc>https://creox.ch/produkt</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/produkt"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/produkt"/></url>
+  <url><loc>https://creox.ch/en/produkt</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/produkt"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/produkt"/></url>
+  <url><loc>https://creox.ch/projekte</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/projekte"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/projekte"/></url>
+  <url><loc>https://creox.ch/en/projekte</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/projekte"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/projekte"/></url>
+  <url><loc>https://creox.ch/team</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/team"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/team"/></url>
+  <url><loc>https://creox.ch/en/team</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/team"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/team"/></url>
+  <url><loc>https://creox.ch/kontakt</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/kontakt"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/kontakt"/></url>
+  <url><loc>https://creox.ch/en/kontakt</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/kontakt"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/kontakt"/></url>
+  <url><loc>https://creox.ch/impressum</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/impressum"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/impressum"/></url>
+  <url><loc>https://creox.ch/en/impressum</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/impressum"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/impressum"/></url>
+  <url><loc>https://creox.ch/datenschutz</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/datenschutz"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/datenschutz"/></url>
+  <url><loc>https://creox.ch/en/datenschutz</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/datenschutz"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/datenschutz"/></url>
+  <url><loc>https://creox.ch/agb</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/agb"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/agb"/></url>
+  <url><loc>https://creox.ch/en/agb</loc><lastmod>2026-10-11</lastmod><xhtml:link rel="alternate" hreflang="de" href="https://creox.ch/agb"/><xhtml:link rel="alternate" hreflang="en" href="https://creox.ch/en/agb"/></url>
+  <url><loc>https://creox.ch/motogen</loc><lastmod>2026-10-15</lastmod></url>
 </urlset>
