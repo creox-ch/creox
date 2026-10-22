@@ -208,7 +208,7 @@ const Vertical: React.FC<{ src: string; dim?: number; title: string; tag: string
       <Logo s={11} />
       <div style={{ marginTop: "auto", paddingRight: 30 }}>
         <Title s={19} c="#fff">{title}</Title>
-        <div style={{ fontFamily: BRAND, fontWeight: 700, fontSize: 30, color: C.yellow, marginTop: 4 }}>19.–21.</div>
+        <div style={{ fontFamily: BRAND, fontWeight: 700, fontSize: 24, color: C.yellow, marginTop: 4, whiteSpace: "nowrap" }}>19.–21.</div>
         <div style={{ fontFamily: UI, fontSize: 10, color: "#ddd", marginTop: 6 }}>{tag}</div>
       </div>
       <div style={{ position: "absolute", right: 8, bottom: 40, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -223,7 +223,7 @@ const FEED: { label: string; el: React.ReactNode }[] = [
     <div style={{ background: "#fff", height: "100%" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 8px", fontFamily: UI, fontWeight: 700, fontSize: 11 }}>
         <span style={{ width: 18, height: 18, borderRadius: 9, background: C.blue }} />motozuerich</div>
-      <div style={{ position: "relative" }}><PH h={205} />
+      <div style={{ position: "relative" }}><PH h={180} />
         <div style={{ position: "absolute", left: 8, bottom: 10 }}><span style={{ background: C.yellow, padding: "2px 5px", fontFamily: BRAND, fontWeight: 700, fontSize: 17, color: C.navy, textTransform: "uppercase" }}>Saisonstart 2027</span></div>
       </div>
       <div style={{ padding: "6px 8px", fontFamily: UI, fontSize: 11, color: "#333" }}>♡  ○  ▷</div>
@@ -237,9 +237,15 @@ const FEED: { label: string; el: React.ReactNode }[] = [
       <div style={{ fontFamily: UI, fontSize: 11, color: "#333", margin: "8px 0", lineHeight: 1.35 }}>Save the Date: 19.–21. Februar 2027 in Zürich-Oerlikon.</div>
       <PH h={130} /><Line w="80%" /><Line w="55%" />
     </div>) },
+  { label: "LinkedIn", el: (
+    <div style={{ background: "#fff", height: "100%", padding: 9 }}>
+      <div style={{ display: "flex", gap: 6, alignItems: "center", fontFamily: UI, fontWeight: 700, fontSize: 10 }}><span style={{ width: 20, height: 20, background: C.blue }} />Creox GmbH</div>
+      <div style={{ fontFamily: UI, fontSize: 10.5, color: "#333", margin: "8px 0", lineHeight: 1.35 }}>Aussteller und Partner: MOTO-ZÜRICH 2027, 19.–21. Februar.</div>
+      <PH h={120} src="img/racers.jpg" /><Line w="70%" /><Line w="45%" />
+    </div>) },
 ];
 
-const TILES: [string, string][] = [["IG", "Instagram"], ["FB", "Facebook"], ["IN", "LinkedIn"], ["TT", "TikTok"], ["YT", "YouTube"], ["TG", "Telegram"], ["TH", "Threads"], ["PI", "Pinterest"]];
+const TILES: [string, string][] = [["IG", "Instagram"], ["FB", "Facebook"], ["IN", "LinkedIn"], ["TT", "TikTok"], ["YT", "YouTube"], ["TG", "Telegram"], ["WA", "WhatsApp"], ["PI", "Pinterest"]];
 
 /* ---------- scene 1: social ---------- */
 const Social: React.FC = () => {
@@ -247,7 +253,7 @@ const Social: React.FC = () => {
   const { fps } = useVideoConfig();
   if (f < T.soc || f >= T.web + 6) return null;
   const out = interpolate(f, [T.web - 6, T.web + 4], [1, 0], clamp);
-  const CW = 166, CH = 296, GAP = 18, X0 = (1080 - (5 * CW + 4 * GAP)) / 2, Y = 560;
+  const CW = 142, CH = 270, GAP = 14, X0 = (1080 - (6 * CW + 5 * GAP)) / 2, Y = 570;
   return (
     <AbsoluteFill style={{ opacity: out, transform: `translateY(${(1 - out) * -30}px)` }}>
       {FEED.map((m, i) => {
@@ -259,7 +265,7 @@ const Social: React.FC = () => {
         const k = spring({ frame: f - st - 12, fps, config: { damping: 10, stiffness: 200 } });
         return (
           <div key={m.label} style={{ position: "absolute", left: x, top: y, width: CW, transform: `scale(${interpolate(s, [0, 1], [0.2, 1])}) rotate(${interpolate(s, [0, 1], [(i % 2 ? 14 : -14), 0])}deg)` }}>
-            <div style={{ fontFamily: LABEL, fontWeight: 700, fontSize: 21, textTransform: "uppercase", color: C.ink, marginBottom: 10, whiteSpace: "nowrap" }}>{m.label}</div>
+            <div style={{ fontFamily: LABEL, fontWeight: 700, fontSize: 19, textTransform: "uppercase", color: C.ink, marginBottom: 10, whiteSpace: "nowrap" }}>{m.label}</div>
             <div style={{ width: CW, height: CH, overflow: "hidden", border: `3px solid ${C.ink}`, boxShadow: `7px 7px 0 ${C.ink}`, position: "relative" }}>{m.el}</div>
             <Check k={f >= st + 12 ? k : 0} size={40} style={{ right: -12, top: 26 }} />
           </div>
