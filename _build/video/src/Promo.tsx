@@ -33,24 +33,28 @@ const ramp = (f: number, a: number, b: number) => interpolate(f, [a, b], [0, 1],
 
 /* ---------- timeline (frames @30fps) ---------- */
 export const T = {
-  drop: 25, sys: 40, chips: [48, 56, 64], click: 82,
-  soc: 95, web: 215, nl: 290, brief: 365, poster: 450, end: 535, total: 600,
+  drop: 25, edit: 48, sys: 168, chips: [176, 184, 192], click: 210,
+  soc: 225, web: 345, nl: 420, brief: 495, poster: 580, save: 665, end: 785, total: 870,
 };
-export const SOC_CARD = (i: number) => T.soc + 6 + i * 8;      // 5 feed cards
+export const SOC_CARD = (i: number) => T.soc + 6 + i * 8;      // 6 feed cards
 export const SOC_TILE = (i: number) => T.soc + 52 + i * 6;     // 8 channel tiles
-export const STAGES = ["Social", "Website", "Newsletter", "Brief", "Plakat"];
-const STAGE_DONE = [T.soc + 100, T.web + 50, T.nl + 52, T.brief + 70, T.poster + 52];
+/* edit scene, local frames from T.edit */
+export const ED = { cuts: [18, 26, 34, 42], pack: [44, 54], sub: 56, logo: 66, tag: 72, music: 78, fmt: [90, 96, 102], done: [54, 64, 76, 86, 106] };
+export const STAGES = ["Video", "Social", "Website", "Newsletter", "Brief", "Plakat"];
+const STAGE_DONE = [T.edit + 104, T.soc + 100, T.web + 50, T.nl + 52, T.brief + 70, T.poster + 52];
 
 /* ---------- header copy ---------- */
 type Phase = { from: number; eyebrow: string; a: string; b: string; box?: boolean; sub: string };
 const PHASES: Phase[] = [
-  { from: 0, eyebrow: "Creox · Marketing-Maschine", a: "Ein Foto ", b: "hochladen.", sub: "Ein Bild vom Event. Mehr braucht es nicht." },
-  { from: T.sys, eyebrow: "Creox · Marketing-Maschine", a: "Das System ", b: "baut.", sub: "Markendesign, Texte DE/EN, alle Formate." },
+  { from: 0, eyebrow: "Creox · Marketing-Maschine", a: "Foto oder Video ", b: "hochladen.", sub: "Jede Grösse, jede Qualität." },
+  { from: T.edit, eyebrow: "00 · Video · automatischer Schnitt", a: "Das System ", b: "schneidet.", sub: "Schnitt, Untertitel, Overlays, Musik: nach Ihren Vorgaben, im Markendesign." },
+  { from: T.sys, eyebrow: "Creox · Marketing-Maschine", a: "Das System ", b: "baut.", sub: "Texte DE/EN, alle Formate, jeder Kanal." },
   { from: T.soc, eyebrow: "01 · Social Media · sofort", a: "Sofort ", b: "überall.", sub: "Jeder Kanal im eigenen Format." },
   { from: T.web, eyebrow: "02 · Website · nach 2 Minuten", a: "Die Website ", b: "zieht nach.", sub: "News-Beitrag in DE und EN." },
   { from: T.nl, eyebrow: "03 · Newsletter · geplant", a: "Der Newsletter ", b: "ist bereit.", sub: "Versand am Freitag um 18:00." },
   { from: T.brief, eyebrow: "04 · Brief · per Post", a: "Der Brief ", b: "geht raus.", sub: "Serienbrief an alle Aussteller." },
   { from: T.poster, eyebrow: "05 · Plakat · Druck", a: "Das Plakat ", b: "hängt.", sub: "Druck-PDF direkt an die Druckerei." },
+  { from: T.save, eyebrow: "Zeit · vorher / nachher", a: "Ein Arbeitstag ", b: "gespart.", sub: "Schätzung: ein Event-Beitrag, alle Kanäle." },
   { from: T.end, eyebrow: "Creox · Marketing Assistant", a: "Ein Inhalt. ", b: "Jeder Kanal.", box: true, sub: "Für Ihre Marke: creox.ch" },
 ];
 
@@ -77,8 +81,9 @@ const Header: React.FC = () => {
 /* ---------- frame: top bar, stage tracker, footer ---------- */
 const Frame: React.FC = () => {
   const f = useCurrentFrame();
-  const trackIn = ramp(f, T.soc, T.soc + 12);
-  const cur = f < T.soc ? -1 : f < T.web ? 0 : f < T.nl ? 1 : f < T.brief ? 2 : f < T.poster ? 3 : f < T.end ? 4 : 5;
+  const trackIn = ramp(f, T.edit, T.edit + 12) * interpolate(f, [T.save - 4, T.save + 6], [1, 0], clamp);
+  const starts = [T.edit, T.soc, T.web, T.nl, T.brief, T.poster];
+  const cur = f >= T.sys && f < T.soc ? -1 : starts.reduce((acc, s, i) => (f >= s ? i : acc), -1);
   return (
     <AbsoluteFill>
       <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 96, borderBottom: `3px solid ${C.ink}`, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 80px" }}>
@@ -92,7 +97,7 @@ const Frame: React.FC = () => {
           const active = i === cur;
           return (
             <div key={s} style={{ flex: 1, border: `3px solid ${C.ink}`, background: done ? C.neon : active ? C.white : "transparent",
-              color: done || active ? C.ink : C.mut2, fontFamily: LABEL, fontWeight: 700, fontSize: 19, textTransform: "uppercase", letterSpacing: "0.02em",
+              color: done || active ? C.ink : C.mut2, fontFamily: LABEL, fontWeight: 700, fontSize: 17, textTransform: "uppercase", letterSpacing: "0",
               padding: "10px 0", textAlign: "center", whiteSpace: "nowrap" }}>
               {done ? "✓ " : ""}{s}
             </div>
@@ -116,47 +121,220 @@ const Cursor: React.FC<{ x: number; y: number; down: boolean; opacity: number }>
 
 const CENTER = { x: 540, y: 800 };
 
-/* ---------- scene 0: upload + system ---------- */
+/* ---------- scene 0: upload photo + video ---------- */
+const FileCard: React.FC<{ src: string; video?: boolean; w: number; h: number }> = ({ src, video, w, h }) => (
+  <div style={{ position: "relative", width: w, height: h, border: `4px solid ${C.ink}`, boxShadow: `12px 12px 0 ${C.ink}`, background: C.ink, overflow: "hidden" }}>
+    <Img src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover", filter: video ? "brightness(.75)" : "none" }} />
+    {video && (
+      <>
+        <div style={{ position: "absolute", left: "50%", top: "50%", width: 84, height: 84, marginLeft: -42, marginTop: -42, background: C.neon, border: `3px solid ${C.ink}`,
+          display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 0, height: 0, borderTop: "18px solid transparent", borderBottom: "18px solid transparent", borderLeft: `30px solid ${C.ink}`, marginLeft: 8 }} />
+        </div>
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "8px 14px", background: C.ink, color: C.white, fontFamily: LABEL, fontSize: 22, display: "flex", justifyContent: "space-between" }}>
+          <span>4K · 2,3 GB</span><span>03:42</span>
+        </div>
+      </>
+    )}
+  </div>
+);
+
 const Upload: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  if (f > T.soc + 8) return null;
+  if (f > T.edit + 6) return null;
   const boxIn = ramp(f, 4, 14);
-  const toNode = ramp(f, T.sys - 6, T.sys + 10);
-  const W = interpolate(toNode, [0, 1], [600, 320]), H = interpolate(toNode, [0, 1], [420, 300]);
-  const out = interpolate(f, [T.soc - 2, T.soc + 8], [1, 0], clamp);
-  const pulse = f >= T.soc - 4 ? spring({ frame: f - (T.soc - 4), fps, config: { damping: 12 } }) : 0;
-  const fly = spring({ frame: f - 8, fps, config: { damping: 16, stiffness: 130 } });
-  const px = interpolate(fly, [0, 1], [860, CENTER.x - 250]), py = interpolate(fly, [0, 1], [1180, CENTER.y - 167]);
-  const rot = interpolate(fly, [0, 1], [12, 0]);
+  const out = interpolate(f, [T.edit - 4, T.edit + 4], [1, 0], clamp);
+  const flyA = spring({ frame: f - 6, fps, config: { damping: 16, stiffness: 130 } });
+  const flyB = spring({ frame: f - 11, fps, config: { damping: 16, stiffness: 130 } });
+  const ax = interpolate(flyA, [0, 1], [-420, CENTER.x - 300]), ay = interpolate(flyA, [0, 1], [1200, CENTER.y - 150]);
+  const bx = interpolate(flyB, [0, 1], [1100, CENTER.x + 10]), by = interpolate(flyB, [0, 1], [1220, CENTER.y - 110]);
   const dropped = f >= T.drop;
-  const curDrag = f < T.drop + 4;
-  const cx = curDrag ? px + 380 : interpolate(f, [T.drop + 4, T.click - 8], [px + 380, 330], { ...clamp, easing: ease });
-  const cy = curDrag ? py + 250 : interpolate(f, [T.drop + 4, T.click - 8], [py + 250, CENTER.y + 245], { ...clamp, easing: ease });
-  const curOp = interpolate(f, [6, 10, T.click + 6, T.click + 12], [0, 1, 1, 0], clamp);
-  const chipLabels = ["Designsystem der Marke", "Texte DE/EN · Claude", "Alle Formate"];
-  const btnIn = ramp(f, 66, 74);
-  const clicked = f >= T.click;
+  const prog = ramp(f, T.drop, T.drop + 16);
+  const cx = bx + 260, cy = by + 170;
+  const curOp = interpolate(f, [8, 12, T.drop + 4, T.drop + 10], [0, 1, 1, 0], clamp);
+  const W = 640, H = 420;
   return (
     <AbsoluteFill style={{ opacity: out }}>
       <div style={{ position: "absolute", left: CENTER.x - W / 2, top: CENTER.y - H / 2, width: W, height: H, opacity: boxIn,
         border: dropped ? `3px solid ${C.ink}` : `3px dashed ${C.mut2}`, background: dropped ? C.ink : C.white,
-        boxShadow: dropped ? `10px 10px 0 ${C.ink}` : "none", transform: `scale(${1 + pulse * 0.08})`, overflow: "hidden" }}>
+        boxShadow: dropped ? `10px 10px 0 ${C.ink}` : "none", overflow: "hidden" }}>
         {!dropped && (
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, color: C.mut, fontFamily: LABEL, fontWeight: 700, fontSize: 30, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-            <div style={{ fontFamily: HEAD, fontSize: 90, lineHeight: 1, color: C.cblue }}>+</div>{t("Foto hierher ziehen")}
+            <div style={{ fontFamily: HEAD, fontSize: 90, lineHeight: 1, color: C.cblue }}>+</div>{t("Foto oder Video hierher")}
           </div>
         )}
         {dropped && (
-          <>
-            <Img src={staticFile("img/hall.jpg")} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 1 - toNode }} />
-            <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "10px 16px", background: C.ink, color: C.neon, fontFamily: LABEL, fontSize: 24, opacity: 1 - toNode }}>eroeffnung.jpg ✓</div>
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", opacity: toNode }}>
-              <div style={{ background: C.neon, color: C.ink, fontFamily: HEAD, fontWeight: 700, fontSize: 56, padding: "8px 18px", lineHeight: 1 }}>CREOX.</div>
-              <div style={{ color: C.white, fontFamily: LABEL, fontSize: 26, marginTop: 16, letterSpacing: "0.06em" }}>CLAUDE + MCP</div>
-            </div>
-          </>
+          <div style={{ position: "absolute", inset: 0, display: "flex", gap: 3 }}>
+            {[["img/hall.jpg", "eroeffnung.jpg", false], ["img/racers.jpg", "rohmaterial.mov", true]].map(([src, name, vid]) => (
+              <div key={name as string} style={{ flex: 1, position: "relative" }}>
+                <Img src={staticFile(src as string)} style={{ width: "100%", height: "100%", objectFit: "cover", filter: vid ? "brightness(.75)" : "none" }} />
+                {vid && <div style={{ position: "absolute", right: 12, top: 12, background: C.neon, color: C.ink, fontFamily: LABEL, fontWeight: 700, fontSize: 20, padding: "4px 8px" }}>4K · 2,3 GB</div>}
+                <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, background: C.ink, color: C.white, fontFamily: LABEL, fontSize: 21, padding: "10px 14px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}><span>{name as string}</span><span style={{ color: C.neon }}>{prog >= 1 ? "✓" : `${Math.round(prog * 100)}%`}</span></div>
+                  <div style={{ height: 6, background: "#333", marginTop: 6 }}><div style={{ height: 6, width: `${prog * 100}%`, background: C.neon }} /></div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
+      </div>
+      {!dropped && (
+        <>
+          <div style={{ position: "absolute", left: ax, top: ay, transform: `rotate(${interpolate(flyA, [0, 1], [-12, -3])}deg)` }}><FileCard src="img/hall.jpg" w={420} h={280} /></div>
+          <div style={{ position: "absolute", left: bx, top: by, transform: `rotate(${interpolate(flyB, [0, 1], [14, 3])}deg)` }}><FileCard src="img/racers.jpg" video w={420} h={280} /></div>
+        </>
+      )}
+      <Cursor x={cx} y={cy} down={f > 12 && f < T.drop} opacity={curOp} />
+    </AbsoluteFill>
+  );
+};
+
+/* ---------- scene 0b: automatic video edit in the brand's template ---------- */
+const SEGS = [
+  { a: 0, b: 0.14, keep: true, img: "img/hall.jpg" },
+  { a: 0.14, b: 0.36, keep: false, img: "img/racers.jpg" },
+  { a: 0.36, b: 0.52, keep: true, img: "img/fmx.jpg" },
+  { a: 0.52, b: 0.74, keep: false, img: "img/ducati.jpg" },
+  { a: 0.74, b: 1, keep: true, img: "img/party.jpg" },
+];
+const PACKED = (() => { let x = 0; return SEGS.map((s) => { const p = x; if (s.keep) x += s.b - s.a; return p; }); })();
+const PACK_LEN = SEGS.filter((s) => s.keep).reduce((acc, s) => acc + s.b - s.a, 0);
+
+const Edit: React.FC = () => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (f < T.edit - 4 || f >= T.sys + 6) return null;
+  const E = f - T.edit;
+  const inn = spring({ frame: E, fps, config: { damping: 18, stiffness: 120 } });
+  const out = interpolate(f, [T.sys - 6, T.sys + 4], [1, 0], clamp);
+  const pk = ramp(E, ED.pack[0], ED.pack[1]);
+  const packed = E >= ED.pack[1];
+  // playhead: sweeps the raw clip, then loops over the finished cut
+  const ph = E < ED.pack[0] ? interpolate(E, [6, ED.pack[0]], [0, 0.999], clamp)
+    : E < ED.pack[1] + 2 ? 0 : interpolate(E, [ED.pack[1] + 2, 118], [0, PACK_LEN - 0.001], clamp);
+  const segX = (i: number) => SEGS[i].a + (PACKED[i] - SEGS[i].a) * pk;
+  const segW = (i: number) => (SEGS[i].b - SEGS[i].a) * (SEGS[i].keep ? 1 : 1 - pk);
+  const under = SEGS.findIndex((s, i) => {
+    if (!packed) return ph >= s.a && ph < s.b;
+    return s.keep && ph >= PACKED[i] && ph < PACKED[i] + (s.b - s.a);
+  });
+  const cur = SEGS[Math.max(0, under)];
+  const local = packed ? ph - PACKED[Math.max(0, under)] : ph - cur.a;
+  const cutIdx = ED.cuts.filter((c) => E >= c).length;
+  const flash = ED.cuts.some((c) => E >= c && E < c + 3) ? 0.6 : 0;
+  const subIn = ramp(E, ED.sub, ED.sub + 6), logo = spring({ frame: E - ED.logo, fps, config: { damping: 10, stiffness: 200 } }), tag = ramp(E, ED.tag, ED.tag + 6);
+  const PW = 560, PH_ = 315, TX = 180, TW = 800, TOP = 890;
+  const checks: [string, number][] = [["Schnitt", 0], ["Untertitel DE/EN", 1], ["Logo & Overlays", 2], ["Musik", 3], ["Formate", 4]];
+  const cutPos = [0.14, 0.36, 0.52, 0.74];
+  return (
+    <AbsoluteFill style={{ opacity: out }}>
+      {/* preview monitor */}
+      <div style={{ position: "absolute", left: 80, top: interpolate(inn, [0, 1], [1300, 540]), width: PW, height: PH_, border: `3px solid ${C.ink}`, boxShadow: `10px 10px 0 ${C.ink}`, overflow: "hidden", background: C.night }}>
+        <Img src={staticFile(cur.img)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: `scale(${1.04 + local * 0.6})`, filter: "brightness(.8)" }} />
+        <div style={{ position: "absolute", inset: 0, background: C.white, opacity: flash }} />
+        <div style={{ position: "absolute", right: 10, top: 10, background: packed ? C.neon : C.ink, color: packed ? C.ink : C.white, fontFamily: LABEL, fontWeight: 700, fontSize: 17, padding: "3px 8px" }}>
+          {packed ? "REEL · 00:30" : "ROH · 4K · 03:42"}
+        </div>
+        <div style={{ position: "absolute", left: 14, top: 14, transform: `scale(${E >= ED.logo ? logo : 0})`, transformOrigin: "0 0" }}><Logo s={20} /></div>
+        <div style={{ position: "absolute", left: 14, top: 168, opacity: tag, transform: `translateX(${(1 - tag) * -20}px)`, background: C.yellow, color: C.navy, fontFamily: BRAND, fontWeight: 700, fontSize: 24, padding: "2px 10px", whiteSpace: "nowrap" }}>19.–21. FEBRUAR</div>
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, textAlign: "center", opacity: subIn, transform: `translateY(${(1 - subIn) * 12}px)` }}>
+          <span style={{ background: "rgba(10,25,41,.85)", color: C.white, fontFamily: BRAND, fontWeight: 700, fontSize: 25, padding: "4px 12px" }}>{t("Saisonstart 2027: wir sind zurück.")}</span>
+          <div style={{ marginTop: 6 }}><span style={{ background: "rgba(10,25,41,.85)", color: "#cfd8e6", fontFamily: BRAND, fontSize: 18, padding: "2px 10px" }}>Season opener 2027: we’re back.</span></div>
+        </div>
+      </div>
+      {/* template + checklist */}
+      <div style={{ position: "absolute", left: 670, top: 540, width: 330, opacity: inn }}>
+        <div style={{ fontFamily: LABEL, fontWeight: 700, fontSize: 18, color: C.cblue, textTransform: "uppercase", marginBottom: 10, whiteSpace: "nowrap" }}>Vorlage: Ihre Marke</div>
+        {checks.map(([label, i]) => {
+          const done = E >= ED.done[i];
+          const k = spring({ frame: E - ED.done[i], fps, config: { damping: 10, stiffness: 220 } });
+          return (
+            <div key={label} style={{ height: 46, marginBottom: 8, border: `3px solid ${C.ink}`, background: done ? C.neon : C.white, display: "flex", alignItems: "center", gap: 10, padding: "0 12px",
+              fontFamily: LABEL, fontWeight: 700, fontSize: 19, textTransform: "uppercase", color: C.ink, whiteSpace: "nowrap" }}>
+              <span style={{ width: 22, textAlign: "center", fontFamily: HEAD, transform: `scale(${done ? k : 1})` }}>{done ? "✓" : "·"}</span>{label}
+              {i === 4 && (
+                <span style={{ marginLeft: "auto", display: "flex", alignItems: "flex-end", gap: 6 }}>
+                  {[[13, 23], [18, 23], [30, 17]].map(([w, h], j) => (
+                    <span key={j} style={{ width: w, height: h, border: `2px solid ${C.ink}`, background: E >= ED.fmt[j] ? C.ink : "transparent", transform: `scale(${E >= ED.fmt[j] ? 1 : 0.4})`, opacity: E >= ED.fmt[j] ? 1 : 0.3 }} />
+                  ))}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {/* timeline */}
+      <div style={{ position: "absolute", left: 80, top: interpolate(inn, [0, 1], [1400, TOP]), width: 920, height: 250, border: `3px solid ${C.ink}`, background: C.white, overflow: "hidden" }}>
+        <div style={{ position: "absolute", left: 16, right: 16, top: 10, display: "flex", justifyContent: "space-between", fontFamily: LABEL, fontWeight: 700, fontSize: 18, textTransform: "uppercase", color: C.mut2 }}>
+          <span>Timeline · automatisch</span><span style={{ color: packed ? C.ink : C.mut2 }}>{packed ? "03:42 → 00:30" : "03:42"}</span>
+        </div>
+        {[["V1", 52, 58], ["T1", 122, 40], ["A1", 174, 50]].map(([n, y, h]) => (
+          <div key={n as string} style={{ position: "absolute", left: 16, top: (y as number) + (h as number) / 2 - 12, fontFamily: LABEL, fontWeight: 700, fontSize: 20, color: C.ink }}>{n as string}</div>
+        ))}
+        {/* V1: clip segments */}
+        {SEGS.map((s, i) => {
+          const dropOn = !s.keep && cutIdx >= (i === 1 ? 2 : 4);
+          return (
+            <div key={i} style={{ position: "absolute", top: 52, height: 58, left: TX - 80 + segX(i) * TW, width: segW(i) * TW, overflow: "hidden", opacity: s.keep ? 1 : 1 - pk,
+              borderRight: s.keep ? `2px solid ${C.ink}` : "none", background: `url(${staticFile(s.img)}) center/cover`, filter: dropOn ? "grayscale(1) brightness(.7)" : "none" }}>
+              {dropOn && <div style={{ position: "absolute", inset: 0, background: `repeating-linear-gradient(45deg, rgba(193,13,13,.55) 0 8px, transparent 8px 16px)` }} />}
+              {dropOn && <div style={{ position: "absolute", left: 6, top: 4, fontFamily: LABEL, fontWeight: 700, fontSize: 15, color: C.white, background: C.red, padding: "1px 5px" }}>RAUS</div>}
+            </div>
+          );
+        })}
+        {cutPos.map((x, i) => (
+          <div key={i} style={{ position: "absolute", left: TX - 80 + x * TW - 2, top: 44, width: 4, height: 74, background: C.red, opacity: E >= ED.cuts[i] ? 1 - pk : 0,
+            transform: `scaleY(${E >= ED.cuts[i] ? ramp(E, ED.cuts[i], ED.cuts[i] + 3) : 0})` }} />
+        ))}
+        {/* T1: subtitles */}
+        {SEGS.map((s, i) => s.keep && (
+          <div key={i} style={{ position: "absolute", top: 122, height: 40, left: TX - 80 + PACKED[i] * TW + 2, width: (s.b - s.a) * TW - 4, background: C.cblue, color: C.white,
+            fontFamily: LABEL, fontSize: 15, display: "flex", alignItems: "center", padding: "0 8px", whiteSpace: "nowrap", overflow: "hidden",
+            opacity: ramp(E, ED.sub + i * 2, ED.sub + i * 2 + 5) }}>DE / EN</div>
+        ))}
+        {/* A1: music waveform */}
+        <div style={{ position: "absolute", top: 174, height: 50, left: TX - 80, width: PACK_LEN * TW * ramp(E, ED.music, ED.music + 10), overflow: "hidden", display: "flex", alignItems: "center", gap: 3 }}>
+          {Array.from({ length: 64 }).map((_, j) => (
+            <span key={j} style={{ flex: "none", width: 4, height: 8 + Math.abs(Math.sin(j * 1.7) * 30 + Math.sin(j * 0.45) * 10), background: C.ink }} />
+          ))}
+        </div>
+        {/* playhead */}
+        <div style={{ position: "absolute", top: 40, height: 200, width: 3, background: C.cblue, left: TX - 80 + ph * TW, opacity: E >= ED.pack[0] && E < ED.pack[1] + 2 ? 0 : 1 }} />
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+/* ---------- scene 0c: system builds + approve ---------- */
+const System: React.FC = () => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (f < T.sys - 4 || f > T.soc + 8) return null;
+  const nodeIn = spring({ frame: f - T.sys, fps, config: { damping: 14, stiffness: 140 } });
+  const out = interpolate(f, [T.soc - 2, T.soc + 8], [1, 0], clamp);
+  const pulse = f >= T.soc - 4 ? spring({ frame: f - (T.soc - 4), fps, config: { damping: 12 } }) : 0;
+  const W = 340, H = 300;
+  const chipLabels = ["Designsystem der Marke", "Texte DE/EN · Claude", "Alle Formate"];
+  const btnIn = ramp(f, T.chips[2] + 4, T.chips[2] + 12);
+  const clicked = f >= T.click;
+  const cx = interpolate(f, [T.sys + 4, T.click - 8], [900, 330], { ...clamp, easing: ease });
+  const cy = interpolate(f, [T.sys + 4, T.click - 8], [1150, CENTER.y + 245], { ...clamp, easing: ease });
+  const curOp = interpolate(f, [T.sys + 4, T.sys + 10, T.click + 6, T.click + 12], [0, 1, 1, 0], clamp);
+  return (
+    <AbsoluteFill style={{ opacity: out }}>
+      <div style={{ position: "absolute", left: CENTER.x - W / 2, top: CENTER.y - H / 2, width: W, height: H, background: C.ink, border: `3px solid ${C.ink}`, boxShadow: `10px 10px 0 ${C.ink}`,
+        transform: `scale(${interpolate(nodeIn, [0, 1], [0.6, 1]) + pulse * 0.08})`, opacity: nodeIn, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ background: C.neon, color: C.ink, fontFamily: HEAD, fontWeight: 700, fontSize: 56, padding: "8px 18px", lineHeight: 1 }}>CREOX.</div>
+        <div style={{ color: C.white, fontFamily: LABEL, fontSize: 26, marginTop: 16, letterSpacing: "0.06em" }}>CLAUDE + MCP</div>
+        <div style={{ display: "flex", gap: 8, marginTop: 22 }}>
+          {["img/hall.jpg", "img/fmx.jpg"].map((s, i) => (
+            <div key={s} style={{ position: "relative", width: 96, height: 64, border: `2px solid ${C.neon}` }}>
+              <Img src={staticFile(s)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              {i === 1 && <div style={{ position: "absolute", right: 0, bottom: 0, background: C.neon, fontFamily: LABEL, fontSize: 12, fontWeight: 700, padding: "0 4px" }}>REEL</div>}
+            </div>
+          ))}
+        </div>
       </div>
       {chipLabels.map((c, i) => {
         const k = ramp(f, T.chips[i], T.chips[i] + 8);
@@ -174,12 +352,7 @@ const Upload: React.FC = () => {
         textTransform: "uppercase", letterSpacing: "0.05em", padding: "18px 32px" }}>
         {clicked ? "✓ Freigegeben" : "Freigeben"}
       </div>
-      {!dropped && (
-        <div style={{ position: "absolute", left: px, top: py, width: 500, height: 334, transform: `rotate(${rot}deg)`, border: `4px solid ${C.ink}`, boxShadow: `12px 12px 0 ${C.ink}` }}>
-          <Img src={staticFile("img/hall.jpg")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        </div>
-      )}
-      <Cursor x={cx} y={cy} down={(f > 10 && f < T.drop) || (f >= T.click - 2 && f < T.click + 4)} opacity={curOp} />
+      <Cursor x={cx} y={cy} down={f >= T.click - 2 && f < T.click + 4} opacity={curOp} />
     </AbsoluteFill>
   );
 };
@@ -432,10 +605,10 @@ const Brief: React.FC = () => {
 const Poster: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  if (f < T.poster - 4 || f >= T.end + 8) return null;
+  if (f < T.poster - 4 || f >= T.save + 8) return null;
   const L = f - T.poster;
   const wall = ramp(f, T.poster - 4, T.poster + 8);
-  const out = interpolate(f, [T.end - 4, T.end + 6], [1, 0], clamp);
+  const out = interpolate(f, [T.save - 4, T.save + 6], [1, 0], clamp);
   const slap = (d: number) => {
     const p = interpolate(L, [d, d + 9], [0, 1], { ...clamp, easing: Easing.in(Easing.quad) });
     const settle = spring({ frame: L - d - 9, fps, config: { damping: 8, stiffness: 260 } });
@@ -487,12 +660,63 @@ const Poster: React.FC = () => {
   );
 };
 
-/* ---------- scene 6: end ---------- */
+/* ---------- scene 6: time saved (rough estimate, one event post across all channels) ---------- */
+export const TASKS: [string, number][] = [
+  ["Video: Schnitt, Untertitel, Formate", 3], ["Social Media, 8 Kanäle", 1.5], ["Website-Beitrag DE/EN", 1],
+  ["Newsletter", 1], ["Serienbrief", 0.5], ["Plakat, Druck-PDF", 1],
+];
+const HOURS = TASKS.reduce((a, [, h]) => a + h, 0); // 8
+const fmtH = (h: number) => (Number.isInteger(h) ? String(h) : h.toFixed(1).replace(".", ","));
+const Savings: React.FC = () => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (f < T.save - 4 || f >= T.end + 6) return null;
+  const S = f - T.save;
+  const out = interpolate(f, [T.end - 4, T.end + 4], [1, 0], clamp);
+  const before = interpolate(S, [8, 44], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  const now = interpolate(S, [50, 62], [0, 1], { ...clamp, easing: Easing.out(Easing.cubic) });
+  const badge = spring({ frame: S - 92, fps, config: { damping: 9, stiffness: 180 } });
+  const hNow = HOURS * before;
+  const Bar: React.FC<{ y: number; label: string; w: number; value: string; neon?: boolean; o: number }> = ({ y, label, w, value, neon, o }) => (
+    <div style={{ position: "absolute", left: 80, right: 80, top: y, opacity: o }}>
+      <div style={{ fontFamily: LABEL, fontWeight: 700, fontSize: 22, textTransform: "uppercase", color: C.mut, marginBottom: 8 }}>{label}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <div style={{ flex: 1, height: 64, border: `3px solid ${C.ink}`, background: C.white, position: "relative" }}>
+          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${w * 100}%`, background: neon ? C.neon : C.ink, borderRight: w > 0 && w < 1 ? `3px solid ${C.ink}` : "none" }} />
+        </div>
+        <div style={{ width: 230, fontFamily: HEAD, fontWeight: 700, fontSize: 58, lineHeight: 1, color: neon ? C.ink : C.ink, textAlign: "right", whiteSpace: "nowrap" }}>{value}</div>
+      </div>
+    </div>
+  );
+  return (
+    <AbsoluteFill style={{ opacity: out }}>
+      <Bar y={540} label="Früher · manuell" w={before} value={`${fmtH(Math.round(hNow * 2) / 2)} Std.`} o={ramp(S, 0, 8)} />
+      <Bar y={680} label="Jetzt · mit Creox" w={(10 / 60 / HOURS) * now + (now > 0 ? 0.012 : 0)} value={`${Math.round(10 * now)} Min.`} neon o={ramp(S, 44, 50)} />
+      <div style={{ position: "absolute", left: 80, right: 80, top: 815, border: `3px solid ${C.ink}`, background: C.white }}>
+        {TASKS.map(([task, h], i) => {
+          const k = ramp(S, 14 + i * 5, 22 + i * 5);
+          return (
+            <div key={task} style={{ display: "flex", justifyContent: "space-between", padding: "6px 18px", borderTop: i ? "2px solid #ddd" : "none", opacity: k,
+              transform: `translateX(${(1 - k) * -24}px)`, fontFamily: LABEL, fontSize: 22, textTransform: "uppercase", color: C.ink }}>
+              <span>{task}</span><span style={{ fontWeight: 700, whiteSpace: "nowrap" }}>{fmtH(h)} Std.</span>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ position: "absolute", left: 80, top: 1172, transform: `scale(${S >= 92 ? badge : 0}) rotate(-2deg)`, transformOrigin: "0 50%",
+        background: C.neon, border: `3px solid ${C.ink}`, boxShadow: `6px 6px 0 ${C.ink}`, padding: "8px 18px", fontFamily: LABEL, fontWeight: 700, fontSize: 24, textTransform: "uppercase", whiteSpace: "nowrap" }}>
+        {t("≈ 98 % weniger Zeit · Sie geben nur frei")}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+/* ---------- scene 7: end ---------- */
 const End: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   if (f < T.end) return null;
-  const items = ["Social Media", "Website", "Newsletter", "Brief", "Plakat"];
+  const items = ["Video-Schnitt", "Social Media", "Website", "Newsletter", "Brief", "Plakat"];
   return (
     <AbsoluteFill>
       <div style={{ position: "absolute", left: 80, right: 80, top: 560, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -503,7 +727,7 @@ const End: React.FC = () => {
               transform: `translateX(${(1 - s) * -60}px)`, opacity: s, boxShadow: `6px 6px 0 ${C.ink}` }}>
               <span style={{ width: 46, height: 46, background: C.neon, border: `3px solid ${C.ink}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: HEAD, fontWeight: 700, fontSize: 28 }}>✓</span>
               <span style={{ fontFamily: HEAD, fontWeight: 700, fontSize: 44, textTransform: "uppercase" }}>{it}</span>
-              <span style={{ marginLeft: "auto", fontFamily: LABEL, fontSize: 22, color: C.mut2, textTransform: "uppercase" }}>{["sofort", "2 Min.", "Fr 18:00", "per Post", "Druck"][i]}</span>
+              <span style={{ marginLeft: "auto", fontFamily: LABEL, fontSize: 22, color: C.mut2, textTransform: "uppercase" }}>{["auto", "sofort", "2 Min.", "Fr 18:00", "per Post", "Druck"][i]}</span>
             </div>
           );
         })}
@@ -517,11 +741,14 @@ export const Promo: React.FC = () => (
     <Frame />
     <Header />
     <Upload />
+    <Edit />
+    <System />
     <Social />
     <Website />
     <Newsletter />
     <Brief />
     <Poster />
+    <Savings />
     <End />
     <Sequence from={0}><Audio src={staticFile("music.wav")} /></Sequence>
   </AbsoluteFill>

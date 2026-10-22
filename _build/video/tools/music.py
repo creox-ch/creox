@@ -1,6 +1,6 @@
-"""Original soundtrack for the Creox promo (synthesised, no samples). 20 s, 120 BPM. Sparse, no whooshes."""
+"""Original soundtrack for the Creox promo (synthesised, no samples). 29 s, 120 BPM. Sparse, no whooshes."""
 import numpy as np, wave, sys
-SR=48000; DUR=20.0; N=int(SR*DUR); fps=30
+SR=48000; DUR=29.0; N=int(SR*DUR); fps=30
 out=np.zeros((N,2)); t=np.arange(N)/SR
 def env(n,a=0.005,d=0.3):
     x=np.arange(n)/SR; return np.minimum(1,x/a)*np.exp(-x/d)
@@ -18,13 +18,21 @@ def tick(dur=0.05,seed=1):
     n=int(dur*SR); return np.random.default_rng(seed).standard_normal(n)*np.exp(-np.arange(n)/SR*90)*0.5
 note=lambda m:440*2**((m-69)/12)
 F=lambda fr: fr/fps
-T=dict(drop=25,chips=[48,56,64],click=82,soc=95,web=215,nl=290,brief=365,poster=450,end=535)
+T=dict(drop=25,edit=48,chips=[176,184,192],click=210,soc=225,web=345,nl=420,brief=495,poster=580,save=665,end=785)
 # pad
 pad=np.zeros(N)
 for m in (57,64,71,72): pad+=np.sin(2*np.pi*note(m)*t)*0.05+np.sin(2*np.pi*note(m)*1.003*t)*0.035
 sw=np.clip(t/1.2,0,1)*np.clip((DUR-t)/1.0,0,1); out+=np.stack([pad*sw,pad*sw],1)
 add(tone(note(45),0.6,0.35,(1,.3)),F(T['drop']),0.55)
 for fr in T['chips']: add(tick(),F(fr),0.3,0.3)
+# edit: cut clicks, soft ticks on each checklist item
+for c in (18,26,34,42): add(tick(0.03,4),F(T['edit']+c),0.55,-0.2); add(tone(note(57),0.15,0.05,(1,.3)),F(T['edit']+c),0.2)
+for d,mm in zip((54,64,76,86,106),(72,74,76,79,81)): add(tone(note(mm),0.3,0.12,(1,.3)),F(T['edit']+d),0.2)
+add(tone(note(45),0.5,0.3,(1,.3)),F(T['edit']),0.3)
+# savings: rising ticks while the counter runs, chord on the badge
+for i in range(10): add(tick(0.02,5),F(T['save']+8+i*3.6),0.25)
+add(tone(note(84),0.4,0.15,(1,.3)),F(T['save']+62),0.2)
+for mm in (69,76,81): add(tone(note(mm),0.9,0.4,(1,.3)),F(T['save']+92),0.16)
 add(tick(0.04,2),F(T['click']),0.9); add(tone(note(69),0.25,0.08,(1,.2)),F(T['click']),0.35)
 # groove from approval to end, bass follows the scenes
 beat=0.5; k=0; st=F(T['click'])

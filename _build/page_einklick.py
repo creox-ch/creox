@@ -76,9 +76,9 @@ def build(p, hero, sec_head, page):
 
     body += f'''<section id="film" class="ek-film">
   <div class="wrap">
-    {sec_head(L("Der ganze Weg in 20 Sekunden", "The whole path in 20 seconds"), L("Social, Website, Newsletter, Brief, Plakat.", "Social, website, newsletter, letter, poster."),
-              L("Ein Foto geht ins System. Erst Social Media, dann die Website, der Newsletter, der Brief per Post und das Plakat an der Wand. Mit Ton.",
-                "One photo goes into the system. First social media, then the website, the newsletter, the letter by post and the poster on the wall. With sound."))}
+    {sec_head(L("Der ganze Weg in 30 Sekunden", "The whole path in 30 seconds"), L("Video, Social, Website, Newsletter, Brief, Plakat.", "Video, social, website, newsletter, letter, poster."),
+              L("Foto oder Video in jeder Grösse hochladen. Das System schneidet das Video, setzt Untertitel DE/EN, Logo und Musik nach Ihrem Markendesign und baut alle Formate. Dann Social Media, Website, Newsletter, Brief per Post und Plakat. Statt rund eines Arbeitstags: etwa 10 Minuten zum Prüfen und Freigeben.",
+                "Upload a photo or a video of any size. The system cuts the video, adds DE/EN subtitles, logo and music in your brand design and builds every format. Then social media, website, newsletter, a letter by post and the poster. Instead of about a working day: roughly 10 minutes to check and approve."))}
     <div class="ek-video reveal"><video controls preload="metadata" playsinline poster="{p.asset("media/ein-klick.jpg")}" width="1080" height="1350">
       <source src="{p.asset("media/ein-klick.mp4")}" type="video/mp4"></video></div>
   </div>
