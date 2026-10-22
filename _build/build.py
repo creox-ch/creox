@@ -4,11 +4,11 @@ Every number, the legal entity and the product descriptions are plain HTML (no J
 import json, pathlib, re, shutil
 
 ROOT = pathlib.Path(__file__).resolve().parent
-DIST = ROOT.parent / "dist"  # build output; copy into the repo root
+DIST = ROOT.parent / "dist"
 SITE = "https://creox.ch"
 
 # slug -> nav label
-PAGES = ["index", "marketing-assistant", "produkt", "projekte", "team", "kontakt", "impressum", "datenschutz", "agb"]
+PAGES = ["index", "marketing-assistant", "ein-klick", "produkt", "projekte", "team", "kontakt", "impressum", "datenschutz", "agb"]
 
 ORG = {
     "name": "Creox GmbH", "street": "Grabenstrasse 15b", "zip": "6340", "city": "Baar",
@@ -65,7 +65,7 @@ def nav(p):
 
 def footer(p):
     nav_links = "".join(f'<a href="{p.href(s)}">{t}</a>' for s, t in [
-        ("marketing-assistant", "Marketing Assistant"), ("produkt", p.L("Produkte", "Products")),
+        ("marketing-assistant", "Marketing Assistant"), ("ein-klick", p.L("Marketing-Maschine", "Marketing machine")), ("produkt", p.L("Produkte", "Products")),
         ("projekte", p.L("Projekte", "Work")), ("team", "Team"), ("kontakt", p.L("Kontakt", "Contact"))])
     legal = "".join(f'<a href="{p.href(s)}">{t}</a>' for s, t in [
         ("impressum", p.L("Impressum", "Legal notice")), ("datenschutz", p.L("Datenschutz", "Privacy")),
@@ -99,7 +99,7 @@ def org_jsonld():
     }
 
 
-def page(p, title, desc, body, jsonld=None):
+def page(p, title, desc, body, jsonld=None, extra_js=None):
     alt_de, alt_en = p.url("de"), p.url("en")
     ld = [org_jsonld()] + (jsonld or [])
     ld_html = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in ld)
@@ -141,7 +141,7 @@ def page(p, title, desc, body, jsonld=None):
 {body}
 </main>
 {footer(p)}
-<script src="{p.asset('site.js')}" defer></script>
+<script src="{p.asset('site.js')}" defer></script>{f'<script type="module" src="{p.asset(extra_js)}"></script>' if extra_js else ''}
 <!-- Vercel Web Analytics — cookie-free, ohne Consent-Banner (siehe Datenschutz) -->
 <script>window.va=window.va||function(){{(window.vaq=window.vaq||[]).push(arguments);}};</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -359,6 +359,7 @@ def p_index(p):
               p.L('Was bei MOTO-Z&Uuml;RICH, SVOI, Frankenplatz und in der Galerie funktioniert, machen wir zum Produkt. Claude ist dabei der gemeinsame Kern.',
                   'What works at MOTO-Z&Uuml;RICH, SVOI, Frankenplatz and the gallery becomes a product. Claude is the shared core.'))}
     {product_teaser(p)}
+    <div class="sec-more"><a class="btn btn-line" href="{p.href('ein-klick')}">{p.L('Marketing-Maschine: ein Foto, jeder Kanal', 'Marketing machine: one photo, every channel')} &rarr;</a></div>
   </div>
 </section>
 <section id="projekte">
@@ -445,6 +446,7 @@ def p_ma(p):
     {sec_head(p.L('Content-Maschinen', 'Content machines'), p.L('L&auml;uft bereits.', 'Already running.'),
               p.L('Jede Maschine arbeitet im Designsystem der jeweiligen Marke und liefert Entw&uuml;rfe zur Freigabe.', 'Every machine works inside the brand&#39;s own design system and delivers drafts for approval.'))}
     <div class="grid3 reveal">{mach_html}</div>
+    <div class="sec-more"><a class="btn btn-line" href="{p.href('ein-klick')}">{p.L('Marketing-Maschine: Live-Demo und Film', 'Marketing machine: live demo and film')} &rarr;</a></div>
   </div>
 </section>
 <section id="automatisierung">
@@ -723,7 +725,8 @@ def p_agb(p):
                       "Allgemeine Geschäftsbedingungen der Creox GmbH, Baar.", "General terms and conditions of Creox GmbH, Baar.")
 
 
-BUILDERS = {"index": p_index, "marketing-assistant": p_ma, "produkt": p_produkt, "projekte": p_projekte,
+import page_einklick
+BUILDERS = {"ein-klick": lambda p: page_einklick.build(p, hero, sec_head, page), "index": p_index, "marketing-assistant": p_ma, "produkt": p_produkt, "projekte": p_projekte,
             "team": p_team, "kontakt": p_kontakt, "impressum": p_impressum, "datenschutz": p_datenschutz, "agb": p_agb}
 
 
@@ -745,7 +748,10 @@ def main():
             out.write_text(decode(BUILDERS[slug](p)), encoding="utf-8")
     shutil.copy(ROOT / "style.css", DIST / "style.css")
     shutil.copy(ROOT / "site.js", DIST / "site.js")
+    shutil.copy(ROOT / "demo.js", DIST / "demo.js")
+    shutil.copy(ROOT / "typo.js", DIST / "typo.js")
     shutil.copytree(ROOT / "img", DIST / "img")
+    shutil.copytree(ROOT / "media", DIST / "media")
     for f in ("og.png", "favicon.svg"):
         shutil.copy(ROOT / "static" / f, DIST / f)
     mg = (ROOT / "static" / "motogen.html").read_text(encoding="utf-8")
